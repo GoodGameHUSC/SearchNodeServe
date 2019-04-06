@@ -11,6 +11,7 @@
   "author": "Maciej Sikora hello@maciejsikora.com",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.14.0"
   },
   "devDependencies": {
