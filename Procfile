@@ -1,1 +1,1 @@
-web: babel -w src/ -d dist/ | nodemon --watch dist
+web: node dist
