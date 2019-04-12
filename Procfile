@@ -1,1 +1,1 @@
-web: node server.js
+web: babel -w src/ -d dist/ | nodemon --watch dist
