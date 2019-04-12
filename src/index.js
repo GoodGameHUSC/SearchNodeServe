@@ -3,7 +3,9 @@ import { app } from './consts';
 //here routes defined
 import './routes';
 
-var bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+app.use(cors())
 // using the JSON body parser
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ type: 'application/*+json' }));

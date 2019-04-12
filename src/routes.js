@@ -1,5 +1,6 @@
 import { app } from './consts';
 import mockData from './mockData'
+const cors = require('cors')
 
 function containString(string, searchString) {
   return string.includes(searchString)
@@ -7,15 +8,21 @@ function containString(string, searchString) {
 function isNegative(string) {
   return containString(string, '!')
 }
-function filterByString(field, filterString) {
+function filterByString(field, filterString, absolute = false) {
   if (filterString) {
     let isPass = false;
     if (isNegative(filterString)) {
-      console.log('here')
       filterString = filterString.substring(1, filterString.length)
+      if(absolute) isPass = field != filterString;
+      else  
       isPass = !containString(field, filterString)
     }
-    else isPass = containString(field, filterString)
+    else{
+      if(absolute)
+        isPass = field == filterString;
+      else
+      isPass = containString(field, filterString)
+    } 
     return isPass;
   }
   return true;
@@ -34,11 +41,9 @@ function filterByDate(field, filterDate) {
     let isPass = false;
     const isNega = isNegative(filterDate);
     field = new Date(field);
-    console.log(field);
     if (isNega) filterDate = filterDate.substring(1, filterDate.length)
 
     filterDate = parseDatetoObject(filterDate)
-    console.log(filterDate);
     if (filterDate.fromDate && filterDate.toDate)
       isPass = filterDate.fromDate <= field && field <= filterDate.toDate
     else if (filterDate.fromDate)
@@ -51,25 +56,35 @@ function filterByDate(field, filterDate) {
   }
   return true;
 }
-app.get('/', (req, res) => {
-  const { name, type, date, owner, content } = req.query;
+app.get('/',cors(), (req, res) => {
+  try{
+    const { name, type, date, owner, content, api_key } = req.query;
   const data = mockData.filter((element) => {
     return (filterByString(element.name, name)
-      && filterByString(element.ower, owner)
+      && filterByString(element.ower, owner, true)
       && filterByString(element.type, type)
       && filterByString(element.content, content)
       && filterByDate(element.date,date)
     )
   })
-  if (data) {
+  if (api_key && api_key == 'hungpham_ws_201200') 
     res.json({
       status: 'OK',
       data: data
-    });
-  } else {
+    },200);
+   else {
     res.json({
       status: 'Fail',
-      message: 'Error when read data'
-    })
+      message: 'Expect API key or API key wrong',
+      error : 'Authentication problem'
+    },401)
   }
+  }catch(e){
+    res.json({
+      status: 'Fail',
+      message: 'Some thing went wrong',
+      error : e
+    },400)
+  }
+  
 });
