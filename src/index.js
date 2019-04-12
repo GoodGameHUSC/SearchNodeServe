@@ -9,6 +9,6 @@ app.use(cors())
 // using the JSON body parser
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ type: 'application/*+json' }));
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log('Serve is running');
 });
